@@ -1,0 +1,26 @@
+{
+  "origem": "Praça Pedro Velho, Natal, RN",
+  "destino": "Praça Sete de Setembro, Natal, RN",
+  "percursos": [
+    {
+      "nome": "Trecho A",
+      "paradas": [
+        "Avenida Deodoro da Fonseca, Natal, RN"
+      ],
+      "barreiras": [
+        {
+          "local": "Avenida Deodoro da Fonseca, Natal, RN",
+          "tipo": "rampa interrompida",
+          "impeditiva": true
+        }
+      ]
+    },
+    {
+      "nome": "Trecho B",
+      "paradas": [
+        "Praça André de Albuquerque, Natal, RN"
+      ],
+      "barreiras": []
+    }
+  ]
+}
