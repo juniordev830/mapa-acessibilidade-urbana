@@ -32,4 +32,7 @@ Também é possível encadear a ferramenta com outro comando usando `-` como ent
 ```bash
 cat exemplo.json | python app.py -
 ```
-\nUma consulta admite até 30 percursos, cada um com até 200 barreiras cadastradas. Os nomes de percursos devem ser únicos sem distinção de maiúsculas/minúsculas; quando nenhum percurso é informado, o resultado não declara uma opção mais acessível.\n
+
+Uma consulta admite até 30 percursos, cada um com até 200 barreiras cadastradas. Os nomes de percursos devem ser únicos sem distinção de maiúsculas/minúsculas; quando nenhum percurso é informado, o resultado não declara uma opção mais acessível.
+
+Arquivos e entrada padrão JSON são limitados a 1 MB (1.000.000 bytes). Conteúdos maiores são rejeitados antes do processamento dos percursos e barreiras.
