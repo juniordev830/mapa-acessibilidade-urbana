@@ -45,16 +45,33 @@ def busca(local):
 
 
 def run(data):
+    if not isinstance(data, dict):
+        raise ValueError("A entrada deve ser um objeto JSON.")
+    registros = data.get("percursos")
+    if not isinstance(registros, list) or len(registros) > 30 or any(
+        not isinstance(item, dict) for item in registros
+    ):
+        raise ValueError("Informe até 30 percursos como objetos.")
     origem, destino = texto(data["origem"]), texto(data["destino"])
     percursos = []
-    for item in data["percursos"]:
+    nomes = set()
+    for item in registros:
+        nome = texto(item["nome"])
+        if nome.casefold() in nomes:
+            raise ValueError(f"Percurso repetido: {nome}.")
+        nomes.add(nome.casefold())
+        barreiras_registradas = item.get("barreiras")
+        if not isinstance(barreiras_registradas, list) or len(barreiras_registradas) > 200 or any(
+            not isinstance(bar, dict) for bar in barreiras_registradas
+        ):
+            raise ValueError("Informe até 200 barreiras como objetos por percurso.")
         barreiras = []
-        for bar in item["barreiras"]:
+        for bar in barreiras_registradas:
             if type(bar["impeditiva"]) is not bool:
                 raise ValueError("impeditiva precisa ser verdadeiro ou falso.")
             barreiras.append({"local": texto(bar["local"]), "tipo": texto(bar["tipo"]),
                               "impeditiva": bar["impeditiva"], "google_maps": busca(bar["local"])})
-        percursos.append({"nome": texto(item["nome"]), "barreiras": barreiras,
+        percursos.append({"nome": nome, "barreiras": barreiras,
                           "impeditivas": sum(b["impeditiva"] for b in barreiras),
                           "google_maps": rota(origem, destino, "a-pe", textos(item["paradas"]))})
     percursos.sort(key=lambda item: (item["impeditivas"], len(item["barreiras"]), item["nome"]))
@@ -68,6 +85,8 @@ import sys
 from relatorio_csv import escrever_csv
 import json
 from pathlib import Path
+
+MAX_JSON_BYTES = 1_000_000
 
 
 def objeto_sem_campos_repetidos(pares):
@@ -90,19 +109,22 @@ def main():
     args = parser.parse_args()
 
     try:
-        entrada = nullcontext(sys.stdin.buffer) if args.entrada == "-" else Path(args.entrada).open(encoding="utf-8-sig")
+        entrada = nullcontext(sys.stdin.buffer) if args.entrada == "-" else Path(args.entrada).open("rb")
         with entrada as source:
-            data = json.load(
-                source,
-                object_pairs_hook=objeto_sem_campos_repetidos,
-                parse_constant=rejeitar_constante_json,
-            )
+            raw = source.read(MAX_JSON_BYTES + 1)
+        if len(raw) > MAX_JSON_BYTES:
+            raise ValueError("JSON excede o limite de 1 MB.")
+        data = json.loads(
+            raw,
+            object_pairs_hook=objeto_sem_campos_repetidos,
+            parse_constant=rejeitar_constante_json,
+        )
         if not isinstance(data, dict):
             raise ValueError("A entrada deve ser um objeto JSON.")
         result = run(data)
     except RecursionError:
         parser.exit(2, "O JSON tem níveis de aninhamento demais.\n")
-    except (KeyError, TypeError, ValueError, OSError) as exc:
+    except (KeyError, TypeError, ValueError, UnicodeError, OSError) as exc:
         parser.exit(2, f"Erro nos dados ou na execução: {exc}\n")
 
     sys.stdout.reconfigure(encoding="utf-8", newline="\n")
