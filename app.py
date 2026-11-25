@@ -81,8 +81,23 @@ def run(data):
                           "impeditivas": sum(b["impeditiva"] for b in barreiras),
                           "google_maps": rota(origem, destino, "a-pe", textos(item["paradas"]))})
     percursos.sort(key=lambda item: (item["impeditivas"], len(item["barreiras"]), item["nome"]))
-    return {"percursos": percursos,
-            "menos_barreiras_registradas": percursos[0]["nome"] if percursos else None}
+    resultado = {"percursos": percursos,
+                 "menos_barreiras_registradas": percursos[0]["nome"] if percursos else None}
+    diagnostico = data.get("diagnostico", False)
+    if type(diagnostico) is not bool:
+        raise ValueError("diagnostico deve ser booleano.")
+    if diagnostico:
+        por_tipo = {}
+        for percurso in percursos:
+            for barreira in percurso["barreiras"]:
+                tipo = barreira["tipo"].casefold()
+                item = por_tipo.setdefault(tipo, {"total": 0, "impeditivas": 0})
+                item["total"] += 1
+                item["impeditivas"] += int(barreira["impeditiva"])
+        resultado["barreiras_por_tipo"] = por_tipo
+        resultado["percursos_sem_impeditivas_registradas"] = [
+            p["nome"] for p in percursos if p["impeditivas"] == 0]
+    return resultado
 
 
 import argparse
