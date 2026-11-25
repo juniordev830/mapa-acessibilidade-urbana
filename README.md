@@ -36,3 +36,8 @@ cat exemplo.json | python app.py -
 Uma consulta admite até 30 percursos, cada um com até 200 barreiras cadastradas. Os nomes de percursos devem ser únicos sem distinção de maiúsculas/minúsculas; quando nenhum percurso é informado, o resultado não declara uma opção mais acessível.
 
 Arquivos e entrada padrão JSON são limitados a 1 MB (1.000.000 bytes). Conteúdos maiores são rejeitados antes do processamento dos percursos e barreiras.
+
+
+## Novo recurso
+
+Com `diagnostico: true`, consolida tipos de barreiras e percursos sem impedimentos registrados. Trata-se de anotações cadastradas; não garante acessibilidade real do percurso.
