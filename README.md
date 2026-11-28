@@ -1,5 +1,7 @@
 # Percursos com acessibilidade urbana
 
+**Navegação** · [Rodar](#rodar) · [Uso](#uso) · [Google Maps](#google-maps) · [Código e estudo](docs/ENGENHARIA_REVERSA.md)
+
 Priorize percursos a pé com base em rampas, travessias e condições observadas das calçadas.
 
 ## Rodar
@@ -36,3 +38,9 @@ cat exemplo.json | python app.py -
 Uma consulta admite até 30 percursos, cada um com até 200 barreiras cadastradas. Os nomes de percursos devem ser únicos sem distinção de maiúsculas/minúsculas; quando nenhum percurso é informado, o resultado não declara uma opção mais acessível.
 
 Arquivos e entrada padrão JSON são limitados a 1 MB (1.000.000 bytes). Conteúdos maiores são rejeitados antes do processamento dos percursos e barreiras.
+
+## Código e roteiro de estudo
+
+Como testar o tratamento de uma observação incompleta sobre a acessibilidade de uma calçada? O [guia de engenharia reversa](docs/ENGENHARIA_REVERSA.md) reúne o mapa dos módulos e uma pergunta técnica baseada no projeto.
+
+Mantido por [João Junior](https://github.com/juniordev830).
